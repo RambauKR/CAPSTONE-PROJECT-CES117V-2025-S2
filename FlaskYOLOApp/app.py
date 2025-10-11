@@ -1,5 +1,5 @@
 from ultralytics import YOLO
-model = YOLO('yolov8n.pt')  # load the YOLOv8 nano model pre-trained on COCO
+model = YOLO("best.pt")  # load the YOLOv8 nano model pre-trained on COCO
 
 from flask import Flask, Response, render_template, redirect, url_for
 
