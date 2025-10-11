@@ -1,0 +1,27 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YOLOv8 Object Detection Stream</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; }
+    #video { border: 2px solid #444; }
+    .btn { padding: 10px 20px; margin: 10px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h1>Real-Time Detection Stream</h1>
+  <!-- Video stream -->
+  <img id="video" src="{{ url_for('video_feed') }}" width="640" height="480" alt="Video Feed">
+  <br>
+  <!-- Control buttons -->
+  <button class="btn" onclick="location.href='/snapshot'">📸 Capture Snapshot</button>
+  <button class="btn" onclick="location.href='/toggle_record'">
+    {{ '⏺ Start Recording' if not request.args.get('rec') else '⏹ Stop Recording' }}
+  </button>
+</body>
+</html>
+
+
+
