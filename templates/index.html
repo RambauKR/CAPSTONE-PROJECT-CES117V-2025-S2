@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PPE Detection - Practical</title>
+    <style>
+      body { font-family: Arial, sans-serif; text-align: center; }
+      img { max-width: 100%; border: 1px solid #ccc }
+      .controls { margin-top: 10px }
+      .controls a { margin-right: 8px }
+      .btn { padding: 10px 20px; margin: 10px; font-size: 16px; }
+    </style>
+  </head>
+  <body>
+    <!-- Row 1: Student 1 -->
+    <div class="row mt-3">
+        <div class="col-12">
+            <h1>Student number</h1>
+            <p>219660111</p>
+        </div>
+    </div>
+    <h1>Real- Time detection Stream</h1>
+    <div>
+      <img src="/video_feed" alt="Video feed" />
+    </div>
+    <br>
+    <div class="controls">
+      <button class="btn" onclick="location.href='/snapshot'">Capture Snapshot</button>
+      <button class="btn" onclick="location.href='/toggle_record'">
+        {{ 'Stop Recording' if not request.args.get('rec') else 'Start Recording' }}
+      </button>
+    </div>
+    
+  </body>
+</html>
