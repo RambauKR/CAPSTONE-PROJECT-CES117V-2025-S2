@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="row mt-10">
+    <div class="col-12">
+        <div class="alert alert-secondary text-center">
+            <strong>Group 04</strong> - Live Camera Feed
+        </div>
+    </div>
+</div>
+<div class="row mt-10">
+    <div class="col-12 d-flex justify-content-center">
+        <img src="{{ url_for('video_feed', route='/group04') }}" width="800" class="img-fluid">
+    </div>
+</div>
+{% endblock content %}
+
+

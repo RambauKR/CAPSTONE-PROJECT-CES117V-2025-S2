@@ -1,10 +1,13 @@
-# CAPSTONE-PROJECT-CES117V-2025-S2
+# CAPSTONE-PROJECT-CES117V-2024-S2
 
-**Experiment 01:**
-Follow the instructions outlined in the Experiment 01 document, available on Brightspace (myTutor).
+Run the following commands to setup the project
 
-**Clone the project.**
-Once your done cloning the project edit the file Classlist.html and add your Student number, copy code snippet below :
+conda env create -f environment.yml
+conda activate capstone
+
+Note. environment.yml file can be found in the project repo
+
+Once your done setting up the project edit the file classlist.html and add your Student number, copy code snippet below :
 
         <!-- Row 1: Student 1 -->
         <div class="row mt-3">

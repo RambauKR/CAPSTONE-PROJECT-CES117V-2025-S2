@@ -1,0 +1,135 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="my-5">
+    <h1 class="text-center mb-5">Project Groups</h1>
+    <div class="mb-4">
+        <h2>Group 1: Class Attendance System using Facial Recognition</h2>
+        <p><strong>Objective:</strong> Create a system that marks students’ attendance based on facial recognition.</p>
+        <h3>Key Components:</h3>
+        <ul>
+            <li><strong>Face Detection and Recognition:</strong>
+                <ul>
+                    <li>Implement face detection using OpenCV or similar library.</li>
+                    <li>Use a pre-trained model or train a facial recognition model (e.g., using OpenFace, Dlib, or FaceNet).</li>
+                    <li>Students should be able to upload their pictures, which will be stored with their names in a database or folder structure.</li>
+                </ul>
+            </li>
+            <li><strong>Attendance Marking:</strong>
+                <ul>
+                    <li>When a student looks into the camera, the system should recognize their face and mark them as "Present" in an Excel file or database.</li>
+                    <li>If a face is detected but not recognized, mark the student as "Not registered" but present in the system.</li>
+                </ul>
+            </li>
+            <li><strong>Data Storage:</strong>
+                <ul>
+                    <li>Save attendance records with the time and date in an Excel file or CSV.</li>
+                    <li>Store uploaded student images in a folder with the corresponding names.</li>
+                </ul>
+            </li>
+        </ul>
+        <h3>To Implement:</h3>
+        <ul>
+            <li>Face detection and recognition.</li>
+            <li>Excel file generation to store attendance.</li>
+            <li>A feedback system to notify users about the recognition status (present/registered or not registered).</li>
+        </ul>
+    </div>
+    <div class="mb-4">
+        <h2>Group 2: Vehicle License Plate Scanner</h2>
+        <p><strong>Objective:</strong> Develop a system to capture vehicle license plates, vehicle color, and make/type in real-time.</p>
+        <h3>Key Components:</h3>
+        <ul>
+            <li><strong>License Plate Detection:</strong>
+                <ul>
+                    <li>Use object detection (e.g., YOLO) to identify license plates from passing vehicles.</li>
+                    <li>Implement Optical Character Recognition (OCR) (e.g., Tesseract) to read the characters on the plates.</li>
+                </ul>
+            </li>
+            <li><strong>Vehicle Color and Type Detection:</strong>
+                <ul>
+                    <li>Implement a model to identify the color of the vehicle.</li>
+                    <li>Use a pre-trained model or train a custom model to classify the vehicle type (e.g., sedan, truck, etc.).</li>
+                </ul>
+            </li>
+            <li><strong>Data Logging:</strong>
+                <ul>
+                    <li>Capture images of passing vehicles and save them in a folder.</li>
+                    <li>Record the license plate number, vehicle color, type, and timestamp in a CSV file for future reference.</li>
+                </ul>
+            </li>
+        </ul>
+        <h3>To Implement:</h3>
+        <ul>
+            <li>License plate detection and OCR.</li>
+            <li>Color and vehicle type detection.</li>
+            <li>Real-time data logging in a CSV file.</li>
+        </ul>
+    </div>
+    <div class="mb-4">
+        <h2>Group 3: Car Counting System</h2>
+        <p><strong>Objective:</strong> Develop a system to count vehicles in different lanes and categorize them by type.</p>
+        <h3>Key Components:</h3>
+        <ul>
+            <li><strong>Lane Separation:</strong>
+                <ul>
+                    <li>Divide the incoming video feed into multiple lanes.</li>
+                    <li>Use image processing techniques (e.g., background subtraction or object detection) to identify and count vehicles in each lane.</li>
+                </ul>
+            </li>
+            <li><strong>Vehicle Counting:</strong>
+                <ul>
+                    <li>Count the number of vehicles in each lane, as well as categorize them by type (e.g., cars, trucks, etc.).</li>
+                </ul>
+            </li>
+            <li><strong>Real-Time Display and Control:</strong>
+                <ul>
+                    <li>Display real-time counts of incoming and outgoing vehicles on a web portal.</li>
+                    <li>Add buttons for capturing a picture, recording video, resetting counts, and saving results.</li>
+                </ul>
+            </li>
+            <li><strong>Data Storage:</strong>
+                <ul>
+                    <li>Save results (vehicle counts, timestamps, and images) to an Excel file with a timestamp whenever the “Save Results” button is clicked.</li>
+                </ul>
+            </li>
+        </ul>
+        <h3>To Implement:</h3>
+        <ul>
+            <li>Lane separation and vehicle counting.</li>
+            <li>Real-time display of counts.</li>
+            <li>Buttons for capturing data, resetting counts, and saving results to an Excel file.</li>
+        </ul>
+    </div>
+    <div class="mb-4">
+        <h2>Group 4: Car Parking Slot Monitoring System</h2>
+        <p><strong>Objective:</strong> Monitor parking slots and display the availability of each slot in real-time.</p>
+        <h3>Key Components:</h3>
+        <ul>
+            <li><strong>Parking Slot Detection:</strong>
+                <ul>
+                    <li>Use image processing techniques or object detection models to monitor parking slots.</li>
+                    <li>Detect whether a parking slot is occupied or unoccupied.</li>
+                </ul>
+            </li>
+            <li><strong>Real-Time Display:</strong>
+                <ul>
+                    <li>Color-code the parking slots in real-time: green for unoccupied and red for occupied.</li>
+                    <li>Display the total number of available and occupied parking slots.</li>
+                    <li>Categorize vehicles by type (e.g., trucks, vans, etc.).</li>
+                </ul>
+            </li>
+            <li><strong>Data Storage:</strong>
+                <ul>
+                    <li>Record the number of occupied and unoccupied slots in a CSV file for future reference.</li>
+                </ul>
+            </li>
+        </ul>
+        <h3>To Implement:</h3>
+        <ul>
+            <li>Parking slot detection.</li>
+            <li>Real-time display of slot availability.</li>
+            <li>Data logging (occupied/unoccupied slots, vehicle types, and timestamp).</li>
+        </ul>
+    </div>
+</div>
+{% endblock content %}
