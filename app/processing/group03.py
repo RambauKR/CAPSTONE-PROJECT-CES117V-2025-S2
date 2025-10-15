@@ -21,14 +21,14 @@ class Group03Processor:
     # 6 lane regions for 1920x1080
     lane_regions = {
     # Left carriageway (moving away from camera), from far-left shoulder toward median
-    "lane_1": [(420, 300), (600, 300), (610, 1050), (150, 1050)],   # leftmost
-    "lane_2": [(600, 300), (770, 300), (840, 1050), (380, 1050)],
-    "lane_3": [(770, 300), (930, 300), (880, 1050), (840, 1050)],   # next to median
+    "lane_1": [(650, 300), (750, 300), (260, 650), (0, 650)],   # leftmost
+    "lane_2": [(750, 300), (820, 300), (500, 650), (260, 650)],
+    "lane_3": [(820, 300), (880, 300), (800, 650), (500, 650)],   # next to median
 
     # Right carriageway (moving toward camera), from median toward far-right shoulder
-    "lane_4": [(970, 300), (1030, 300), (1600, 1050), (1230, 1050)],  # next to median
-    "lane_5": [(1030, 300), (1050, 300), (1500, 1050), (1280, 1050)],
-    "lane_6": [(1300, 300), (1480, 300), (1870, 1050), (1500, 1050)], # rightmost
+    "lane_4": [(970, 300), (1030, 300), (1300, 650), (1100, 650)],  # next to median
+    "lane_5": [(1030, 300), (1080, 300), (1500, 650), (1300, 650)],
+    "lane_6": [(1080, 300), (1150, 300), (1700, 650), (1500, 650)], # rightmost
 }
  
 
