@@ -1,6 +1,5 @@
 import cv2
 from flask import Flask, render_template,url_for,Response, request
-from ultralytics import YOLO
 
 # Import processing classes
 from processing.group01 import Group01Processor
@@ -53,13 +52,8 @@ def gen(route):
             if not ret:
                 break
 
-            results = model.predict(frame, conf=0.5)   
-
-            annotate_frame = results[0].plot()
-
-
             # Process frame based on the route
-            processed_frame = process_frame_based_on_route(route, annotate_frame)
+            processed_frame = process_frame_based_on_route(route, frame)
 
             # Encode the processed frame and return it as a byte stream
             ret, buffer = cv2.imencode('.jpg', processed_frame)
@@ -75,8 +69,6 @@ def gen(route):
 def video_feed(route):
     return Response(gen(route), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-
-model = YOLO('yolov11n.pt')
 
 if __name__ == '__main__':
     app.run(debug=True)
