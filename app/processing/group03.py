@@ -4,7 +4,7 @@ from collections import defaultdict, deque
 import numpy as np
 
 class Group03Processor:
-    model = YOLO("yolo11n.pt")
+    model = YOLO("yolo11x.pt")
     track_history = defaultdict(lambda: deque(maxlen=30))
     vehicle_classes = [2, 3, 5, 7]  # Car, Motorcycle, Bus, Truck
 
@@ -88,33 +88,35 @@ class Group03Processor:
                 pts = np.array(polygon, np.int32).reshape((-1, 1, 2))
                 cv2.polylines(annotated_frame, [pts], True, (255, 255, 0), 2)
 
-                # Draw IN counts
-                y_offset = 30
+                # IN counts (left side of lane)
+                x_in = min([p[0] for p in polygon]) + 20
+                y_offset = 50
                 for class_id, count in Group03Processor.lane_counts_in[lane].items():
                     cv2.putText(
                         annotated_frame,
-                        f"{lane} IN {Group03Processor.get_class_name(class_id)}: {count}",
-                        (pts[0][0][0]+5, y_offset),
+                        f"{lane} IN {Group03Processor.get_class_name(class_id)}:{count}",
+                        (x_in, y_offset),
                         cv2.FONT_HERSHEY_SIMPLEX,
-                        0.6,
+                        0.7,
                         (0, 255, 0),
                         2,
                     )
-                    y_offset += 20
+                    y_offset += 40
 
-                # Draw OUT counts
-                y_offset = 150
+                # OUT counts (right side of lane)
+                x_out = max([p[0] for p in polygon]) - 300  # adjust offset for wide text
+                y_offset = 50
                 for class_id, count in Group03Processor.lane_counts_out[lane].items():
                     cv2.putText(
                         annotated_frame,
-                        f"{lane} OUT {Group03Processor.get_class_name(class_id)}: {count}",
-                        (pts[0][0][0]+5, y_offset),
+                        f"{lane} OUT {Group03Processor.get_class_name(class_id)}:{count}",
+                        (x_out, y_offset),
                         cv2.FONT_HERSHEY_SIMPLEX,
-                        0.6,
+                        0.7,
                         (0, 0, 255),
                         2,
                     )
-                    y_offset += 20
+                    y_offset += 40
 
             return annotated_frame
 
