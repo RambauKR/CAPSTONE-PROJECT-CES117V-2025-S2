@@ -1,17 +1,138 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="row mt-10">
-    <div class="col-12">
-        <div class="alert alert-secondary text-center">
-            <strong>Group 03</strong> - Live Camera Feed
+<div class="container mt-4">
+    <div class="alert alert-secondary text-center">
+        <strong>Group 03</strong> - Vehicle Counting and Analytics Dashboard
+    </div>
+
+    <!-- Video Feed -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <img src="{{ url_for('video_feed', route='group03') }}" width="100%" class="img-fluid rounded shadow">
+        </div>
+    </div>
+
+    <!-- Vehicle Count Cards -->
+    <div class="row mb-4" id="vehicleCards">
+        <!-- Cards will be injected dynamically here -->
+    </div>
+
+    <!-- Charts -->
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header text-center bg-primary text-white">IN Count per Lane</div>
+                <div class="card-body">
+                    <canvas id="inChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header text-center bg-success text-white">OUT Count per Lane</div>
+                <div class="card-body">
+                    <canvas id="outChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header text-center bg-warning text-dark">Vehicle Type Distribution</div>
+                <div class="card-body">
+                    <canvas id="typeChart"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<div class="row mt-10">
-    <div class="col-12 d-flex justify-content-center">
-        <img src="{{ url_for('video_feed', route='/group03') }}" width="800" class="img-fluid">
-    </div>
-</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+async function fetchData() {
+    try {
+        const res = await fetch("/group03_data");
+        if (!res.ok) throw new Error("Server error");
+        return await res.json();
+    } catch (err) {
+        console.error("Failed to fetch data:", err);
+        return [];
+    }
+}
+
+// Initialize charts
+const ctxIn = document.getElementById('inChart').getContext('2d');
+const ctxOut = document.getElementById('outChart').getContext('2d');
+const ctxType = document.getElementById('typeChart').getContext('2d');
+
+const inChart = new Chart(ctxIn, {
+    type: 'bar',
+    data: { labels: [], datasets: [{ label: 'IN', backgroundColor: '#4caf50', data: [] }] },
+    options: { responsive: true, scales: { y: { beginAtZero: true } } }
+});
+const outChart = new Chart(ctxOut, {
+    type: 'bar',
+    data: { labels: [], datasets: [{ label: 'OUT', backgroundColor: '#f44336', data: [] }] },
+    options: { responsive: true, scales: { y: { beginAtZero: true } } }
+});
+const typeChart = new Chart(ctxType, {
+    type: 'doughnut',
+    data: { labels: [], datasets: [{ label: 'Vehicle Types', backgroundColor: ['#2196f3','#ff9800','#9c27b0','#00bcd4'], data: [] }] },
+    options: { responsive: true }
+});
+
+// Update dashboard
+async function updateDashboard() {
+    const data = await fetchData();
+
+    // --- Normalize vehicle types ---
+    const vehicleTypes = ["Car", "Motorcycle", "Bus", "Truck"];
+    const totalCounts = {};
+    vehicleTypes.forEach(v => totalCounts[v] = 0);
+    data.forEach(d => {
+        const vtype = String(d.vehicle_type);
+        if (!totalCounts[vtype]) totalCounts[vtype] = 0;
+        totalCounts[vtype] += d.count;
+    });
+
+    // --- Update Cards ---
+    const cardContainer = document.getElementById('vehicleCards');
+    cardContainer.innerHTML = '';
+    vehicleTypes.forEach(v => {
+        cardContainer.innerHTML += `
+            <div class="col-md-3 mb-3">
+                <div class="card text-center shadow-sm border-primary">
+                    <div class="card-body">
+                        <h5 class="card-title">${v}</h5>
+                        <p class="card-text display-6">${totalCounts[v]}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    // --- IN / OUT Charts ---
+    const lanes = [...new Set(data.map(d => d.lane))];
+    const inCounts = lanes.map(l => data.filter(d => d.lane === l && d.direction === "IN").reduce((a,b)=>a+b.count,0));
+    const outCounts = lanes.map(l => data.filter(d => d.lane === l && d.direction === "OUT").reduce((a,b)=>a+b.count,0));
+
+    inChart.data.labels = lanes;
+    inChart.data.datasets[0].data = inCounts;
+    inChart.update();
+
+    outChart.data.labels = lanes;
+    outChart.data.datasets[0].data = outCounts;
+    outChart.update();
+
+    // --- Vehicle Type Distribution ---
+    const typeData = vehicleTypes.map(v => totalCounts[v]);
+    typeChart.data.labels = vehicleTypes;
+    typeChart.data.datasets[0].data = typeData;
+    typeChart.update();
+}
+
+// Refresh every 3 seconds
+setInterval(updateDashboard, 3000);
+updateDashboard();
+</script>
 {% endblock content %}
-
-

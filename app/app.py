@@ -1,5 +1,7 @@
 import cv2
-from flask import Flask, render_template,url_for,Response, request
+from flask import Flask, render_template,url_for,Response, request, jsonify
+import pandas as pd
+
 
 # Import processing classes
 from processing.group01 import Group01Processor
@@ -63,6 +65,25 @@ def gen(route):
 
     finally:
         cap.release()  # Release the camera when done
+
+
+@app.route('/group03_data')
+def group03_data():
+    try:
+        df = pd.read_csv("vehicle_counts.csv")
+        if df.empty:
+            return jsonify([])
+
+        # Group by lane, direction, and vehicle_type
+        grouped = df.groupby(["lane", "direction", "vehicle_type"]).size().reset_index(name="count")
+
+        # Ensure vehicle_type is string
+        grouped["vehicle_type"] = grouped["vehicle_type"].astype(str)
+
+        return jsonify(grouped.to_dict(orient="records"))
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
 
 
 @app.route('/video_feed/<route>')
