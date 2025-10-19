@@ -1,5 +1,5 @@
 import cv2
-from flask import Flask, render_template,url_for,Response, request
+from flask import Flask, jsonify , render_template,url_for,Response, request
 
 # Import processing classes
 from processing.group01 import Group01Processor
@@ -13,6 +13,8 @@ app = Flask(__name__)
 @app.route('/home')
 def index():
     return render_template('index.html')
+
+current_blur_classes = Group02Processor.DEFAULT_BLUR_CLASSES 
 
 @app.route('/group01')
 def group01():
@@ -30,12 +32,36 @@ def group03():
 def group04():
     return render_template('group04.html')
 
+@app.route('/set_blur_classes', methods=['POST'])
+def set_blur_classes():
+    global current_blur_classes
+    
+    # 1. Check if the request body is valid JSON
+    if not request.is_json:
+        return jsonify({"error": "Missing JSON in request"}), 400
+
+    data = request.get_json()
+    
+    # 2. Extract the classes array
+    new_classes = data.get('classes', [])
+    
+    if not isinstance(new_classes, list):
+        return jsonify({"error": "Classes field must be a list"}), 400
+
+    # 3. Update the global setting
+    current_blur_classes = new_classes
+    
+    # 4. Success Response (matches the JavaScript's expectation)
+    print(f"Blur settings updated to: {current_blur_classes}")
+    return jsonify({"message": "Settings updated successfully"}), 200
+
+
 # Function to choose the processing based on route
 def process_frame_based_on_route(route, frame):
     if route == 'group01':
         return Group01Processor.process(frame)
     elif route == 'group02':
-        return Group02Processor.process(frame)
+        return Group02Processor.process(frame, blur_classes=current_blur_classes)
     elif route == 'group03':
         return Group03Processor.process(frame)
     elif route == 'group04':
@@ -46,8 +72,10 @@ def process_frame_based_on_route(route, frame):
 
 def gen(route):
     cap = cv2.VideoCapture(0)
+
     try:
         while True:
+           
             ret, frame = cap.read()
             if not ret:
                 break
