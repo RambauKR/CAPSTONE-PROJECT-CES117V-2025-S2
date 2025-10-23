@@ -107,32 +107,34 @@ class Group03Processor:
                     if lane_name is None:
                         continue
 
-                    # Determine movement direction (IN/OUT)
-                    if len(Group03Processor.track_history[track_id]) >= 2:
-                        prev_y = Group03Processor.track_history[track_id][-2]
-                        curr_y = center_y
-                        mid_line = frame.shape[0] // 2
-                        # Vehicle moving down (IN)
-                        if prev_y < 300 <= curr_y and track_id not in Group03Processor.counted_ids_in:
+                    # Assign direction based on lane position (no midline check needed)
+                    in_lanes = ["lane_1", "lane_2", "lane_3"]   # vehicles moving away from camera
+                    out_lanes = ["lane_4", "lane_5", "lane_6"]  # vehicles moving toward camera
+
+                    if lane_name in in_lanes:
+                        direction = "IN"
+                        if track_id not in Group03Processor.counted_ids_in:
                             Group03Processor.lane_counts_in[lane_name][class_id] += 1
                             Group03Processor.counted_ids_in.add(track_id)
                             Group03Processor.log_vehicle(
                                 lane_name,
                                 Group03Processor.get_class_name(class_id),
-                                "IN",
+                                direction,
                                 Group03Processor.lane_counts_in[lane_name][class_id]
                             )
 
-                        # Vehicle moving up (OUT)
-                        elif prev_y > 650 >= curr_y and track_id not in Group03Processor.counted_ids_out:
+                    elif lane_name in out_lanes:
+                        direction = "OUT"
+                        if track_id not in Group03Processor.counted_ids_out:
                             Group03Processor.lane_counts_out[lane_name][class_id] += 1
                             Group03Processor.counted_ids_out.add(track_id)
                             Group03Processor.log_vehicle(
                                 lane_name,
                                 Group03Processor.get_class_name(class_id),
-                                "OUT",
+                                direction,
                                 Group03Processor.lane_counts_out[lane_name][class_id]
                             )
+
 
             # Draw lane boundaries and labels
             for lane, polygon in Group03Processor.lane_regions.items():
