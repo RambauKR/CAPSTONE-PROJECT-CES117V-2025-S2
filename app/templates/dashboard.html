@@ -1,0 +1,121 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12 text-center mb-4">
+            <h1 class="display-4 text-dark">Analytics Dashboard</h1>
+            <p class="lead text-muted">Real-time data from the video feed.</p>
+        </div>
+    </div>
+
+    <!-- Analytics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card bg-white border-0 shadow-sm text-dark">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-primary">Total Blurred Objects Detected</h5>
+                    <h1 id="total-count" class="display-3">0</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Pie Chart Card -->
+        <div class="col-lg-6 mb-4">
+            <div class="card bg-white border-0 shadow-sm text-dark h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Blurred Object Categories</h5>
+                    <div id="pie-chart" style="width:100%; height:400px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Heatmap Card -->
+        <div class="col-lg-6 mb-4">
+            <div class="card bg-white border-0 shadow-sm text-dark h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Blurred Region Heatmap</h5>
+                    <div id="heatmap-chart" style="width:100%; height:400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Flags to track if charts have been drawn for the first time
+    let pieChartInitialized = false;
+    let heatmapChartInitialized = false;
+
+    function updateAnalytics() {
+        // Fetch the total count
+        fetch('/get_analytics')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('total-count').innerText = data.total_blurred_count;
+            })
+            .catch(error => console.error('Error fetching analytics:', error));
+
+        // Fetch the chart data
+        fetch('/charts')
+            .then(response => response.json())
+            .then(data => {
+                // The JSON from your app is a STRING inside a JSON object,
+                // so we must parse it.
+                
+                // Update Pie Chart
+                if (data.pie_chart && data.pie_chart !== "{}") {
+                    try {
+                        const pieFig = JSON.parse(data.pie_chart);
+                        // Use newPlot for the first render, react for fast updates
+                        if (!pieChartInitialized) {
+                            Plotly.newPlot('pie-chart', pieFig.data, pieFig.layout);
+                            pieChartInitialized = true;
+                        } else {
+                            Plotly.react('pie-chart', pieFig.data, pieFig.layout);
+                        }
+                    } catch (e) {
+                        console.error("Error parsing/plotting pie chart JSON:", e);
+                    }
+                } else {
+                    // Clear the chart if no data
+                    Plotly.newPlot('pie-chart', [], {title: 'Blurred Object Categories', template: 'plotly_dark'});
+                    pieChartInitialized = false; // Reset flag
+                }
+
+                // Update Heatmap
+                if (data.heatmap_chart && data.heatmap_chart !== "{}") {
+                    try {
+                        const heatmapFig = JSON.parse(data.heatmap_chart);
+                        // Use newPlot for the first render, react for fast updates
+                        if (!heatmapChartInitialized) {
+                            Plotly.newPlot('heatmap-chart', heatmapFig.data, heatmapFig.layout);
+                            heatmapChartInitialized = true;
+                        } else {
+                            Plotly.react('heatmap-chart', heatmapFig.data, heatmapFig.layout);
+                        }
+                    } catch (e) {
+                        console.error("Error parsing/plotting heatmap JSON:", e);
+                    }
+                } else {
+                    // Clear the chart if no data
+                    Plotly.newPlot('heatmap-chart', [], {title: 'Blurred Region Heatmap', template: 'plotly_dark'});
+                    heatmapChartInitialized = false; // Reset flag
+                }
+            })
+            .catch(error => console.error('Error fetching charts:', error));
+    }
+
+    // Update charts every 2 seconds
+    document.addEventListener('DOMContentLoaded', (event) => {
+        updateAnalytics(); // Run once on load
+        setInterval(updateAnalytics, 2000); // Then update every 2 seconds
+    });
+</script>
+{% endblock content %}
+
