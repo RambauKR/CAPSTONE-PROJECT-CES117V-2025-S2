@@ -3,15 +3,20 @@
 <div class="row mt-10">
     <div class="col-12">
         <div class="alert alert-secondary text-center">
-            <strong>Group 01</strong> - Live Camera Feed
+            <strong>Group 01</strong> - Smart Parking Management System
         </div>
     </div>
 </div>
+
 <div class="row mt-10">
     <div class="col-12 d-flex justify-content-center">
-        <img src="{{ url_for('video_feed', route='/group01') }}" width="800" class="img-fluid">
+        <img src="{{ url_for('video_feed', route='group01') }}" width="800" class="img-fluid rounded shadow">
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-12 text-center">
+        <p class="text-muted">Live detection of parked vehicles, empty spaces, and car type classification.</p>
     </div>
 </div>
 {% endblock content %}
-
-
