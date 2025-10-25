@@ -45,7 +45,7 @@ def process_frame_based_on_route(route, frame):
         return frame
 
 def gen(route):
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
     try:
         while True:
             ret, frame = cap.read()
