@@ -2,6 +2,7 @@
 
 from ultralytics import YOLO
 import cv2
+from collections import defaultdict
 
 class Group02Processor:
 
@@ -44,6 +45,12 @@ class Group02Processor:
         classes_to_process = blur_classes 
         
         processed_frame = frame.copy()
+
+        frame_analytics = {
+            "total_blurred_count": 0,
+            "object_types": defaultdict(int),
+            "heatmap_points": []
+        }
         
         # Return frame immediately if there's nothing to blur
         if not classes_to_process:
@@ -64,5 +71,20 @@ class Group02Processor:
  
                 if label in classes_to_process and conf > 0.5:
                     processed_frame = cls.blur_object(processed_frame, bbox)
+
+                    x1, y1, x2, y2 = map(int, bbox)
+                    h, w, _ = processed_frame.shape
+                    x1, y1 = max(0, x1), max(0, y1)
+                    x2, y2 = min(w, x2), min(h, y2)
+                     
+                    cv2.rectangle(processed_frame, (x1, y1), (x2, y2), (0, 0, 255), 2)    
+
+                    frame_analytics["total_blurred_count"] += 1
+                    frame_analytics["object_types"][label] += 1
+                    
+                    # Add center point for heatmap
+                    center_x = int((x1 + x2) / 2)
+                    center_y = int((y1 + y2) / 2)
+                    frame_analytics["heatmap_points"].append((center_x, center_y))
  
-        return processed_frame
+        return processed_frame, frame_analytics
