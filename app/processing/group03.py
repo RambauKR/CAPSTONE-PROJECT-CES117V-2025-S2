@@ -8,7 +8,7 @@ from datetime import datetime
 
 class Group03Processor:
     # Load YOLO model
-    model = YOLO("yolo11x.pt")
+    model = YOLO("yolo11n.pt")
 
     # Store track history for movement direction
     track_history = defaultdict(lambda: deque(maxlen=30))
