@@ -1,5 +1,6 @@
 import cv2
-from flask import Flask, render_template,url_for,Response, request
+from flask import Flask, render_template,url_for,Response, request,jsonify, send_file
+import csv
 
 # Import processing classes
 from processing.group01 import Group01Processor
@@ -43,6 +44,28 @@ def process_frame_based_on_route(route, frame):
     else:
         # Default behavior for other routes
         return frame
+    
+# ---- Chart.js JSON data from CSV ----
+@app.route('/group04/csv_data')
+def group04_csv_data():
+    data = []
+    try:
+        with open(Group04Processor.csv_filename, mode='r') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                data.append({
+                    "time": row["Timestamp"],
+                    "count": int(row["People_Count"])
+                })
+    except FileNotFoundError:
+        pass
+    return jsonify(data)
+
+# ---- CSV download endpoint ----
+@app.route('/group04/download')
+def group04_download():
+    return send_file(Group04Processor.csv_filename, as_attachment=True)
+
 
 def gen(route):
     cap = cv2.VideoCapture(0)

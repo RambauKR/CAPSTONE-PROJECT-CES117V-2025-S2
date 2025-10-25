@@ -1,17 +1,77 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="row mt-10">
-    <div class="col-12">
-        <div class="alert alert-secondary text-center">
-            <strong>Group 04</strong> - Live Camera Feed
+<div class="row mt-4">
+    <div class="col-12 text-center">
+        <div class="alert alert-secondary">
+            <strong>Group 04</strong> - Real-Time People Counting and Tracking
         </div>
     </div>
 </div>
-<div class="row mt-10">
+
+<div class="row mt-4">
     <div class="col-12 d-flex justify-content-center">
-        <img src="{{ url_for('video_feed', route='/group04') }}" width="800" class="img-fluid">
+        <img src="{{ url_for('video_feed', route='group04') }}" width="800" class="img-fluid border shadow">
     </div>
 </div>
+
+<hr class="my-4">
+
+<div class="row">
+    <div class="col-12">
+        <h4 class="text-center">📊 People Count Trend (From CSV Data)</h4>
+        <canvas id="peopleChart" height="100"></canvas>
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <a href="{{ url_for('group04_download') }}" class="btn btn-success">
+        ⬇️ Download CSV Report
+    </a>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const ctx = document.getElementById('peopleChart').getContext('2d');
+    const peopleChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'People Count',
+                data: [],
+                borderColor: 'rgba(54, 162, 235, 1)',
+                tension: 0.4,
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: { display: true, text: 'Count' }
+                },
+                x: {
+                    title: { display: true, text: 'Time' }
+                }
+            }
+        }
+    });
+
+    async function updateChartFromCSV() {
+        const response = await fetch('/group04/csv_data');
+        const data = await response.json();
+
+        if (data && data.length > 0) {
+            peopleChart.data.labels = data.map(d => d.time);
+            peopleChart.data.datasets[0].data = data.map(d => d.count);
+            peopleChart.update();
+        }
+    }
+
+    // Refresh chart every 3 seconds
+    setInterval(updateChartFromCSV, 3000);
+    updateChartFromCSV();
+</script>
 {% endblock content %}
-
-
